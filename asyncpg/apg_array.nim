@@ -15,7 +15,8 @@ when defined(windows) and defined(gcc):
   {.passC:"-mno-ms-bitfields".}
 
 type
-  pgUncArray {.unchecked.}[T] = array[0..100_000_000, T]
+  #pgUncArray {.unchecked.}[T] = Array[0..100_000_000, T]
+  pgUncArray [T] = UncheckedArray[T] #0..100_000_000, T
 
   pgArray*[T] = object
     p: pointer

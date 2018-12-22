@@ -323,6 +323,7 @@ proc copyTo*(conn: apgConnection, buffer: pointer,
         break
   else:
     let fd = AsyncFD(pqsocket(conn.pgconn))
+    register(fd) #mathack
     addWrite(fd, cb)
 
   return retFuture
@@ -382,6 +383,7 @@ proc copyFromInto*(conn: apgConnection, buffer: pointer,
         return true
 
   let fd = AsyncFD(pqsocket(conn.pgconn))
+  register(fd) #mathack
   discard cb(fd)
   return retFuture
 
@@ -459,6 +461,7 @@ proc execAsync(conn: apgConnection, statement: string, pN: int32, pT: POid,
     retFuture.fail(newException(ValueError, $pqerrorMessage(conn.pgconn)))
   else:
     let fd = AsyncFD(pqsocket(conn.pgconn))
+    #register(fd) #mathack
     discard cb(fd)
   return retFuture
 
@@ -500,7 +503,7 @@ template setRow(pgres: PPGresult, r, line, cols) =
   for col in 0..<cols:
     let x = pqgetvalue(pgres, line.int32, col.int32)
     if x.isNil:
-      r[col] = nil
+      r[col] = ""
     else:
       r[col] = $x
 
@@ -509,7 +512,7 @@ template setRowInline(pgres: PPGresult, r, line, cols) =
     setLen(r[col], 0)
     let x = pqgetvalue(pgres, line.int32, col.int32)
     if x.isNil:
-      r[col] = nil
+      r[col] = ""
     else:
       add(r[col], x)
 

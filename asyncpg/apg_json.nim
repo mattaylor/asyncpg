@@ -15,7 +15,8 @@ type
   JsonB* = distinct JsonNode
   Json* = distinct JsonNode
 
-  pgUncArray {.unchecked.}[T] = array[0..100_000_000, T]
+  #pgUncArray {.unchecked.}[T] = array[0..100_000_000, T]
+  pgUncArray [T] = UncheckedArray[T]
 
   pgJson = object
     p: pointer
